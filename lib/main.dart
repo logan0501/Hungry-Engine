@@ -28,6 +28,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String name ,mobile;
+  TextEditingController _namecontroller=TextEditingController();
+  TextEditingController _mobilecontroller=TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.only(top: 50.0,left: 30,right: 30),
                 child: TextField(
-
+    controller: _namecontroller,
                   decoration: InputDecoration(
                     hintText: 'Name',
 
@@ -85,14 +88,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
                   ),
-
+controller: _mobilecontroller,
                   style: TextStyle(
                     fontSize: 24,
                     letterSpacing: 1.3
                   ),
                 ),
               ),
-              ElevatedButton(onPressed: (){},
+              ElevatedButton(onPressed: (){
+                print(_namecontroller.text);
+                print(_namecontroller.text);
+              },
                 
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.white.withOpacity(0.2)),
