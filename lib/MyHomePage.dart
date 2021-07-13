@@ -43,17 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     hintText: 'Name',
-                    border: new OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(25.0),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
+                    focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0xffFF4A32),
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(25.0),
                       ),
                     ),
                     prefixIcon: Icon(
@@ -75,17 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(25.0),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
+                    focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0xffFF4A32),
-                      ),
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(25.0),
                       ),
                     ),
                     hintText: 'Mobile',
