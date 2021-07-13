@@ -1,12 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hungry_engine/SearchItem.dart';
 
 import 'MyHomePage.dart';
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -17,13 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-
         primarySwatch: Colors.blue,
       ),
       initialRoute: "/",
-      routes:{"/":(context)=>MyHomePage(),
-      "/searchitem":(context)=>SearchItem()},
+      routes: {
+        "/": (context) => MyHomePage(),
+        "/searchitem": (context) => SearchItem()
+      },
     );
   }
 }
-

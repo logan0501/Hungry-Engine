@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "688927287316",
+    "project_id": "hungryengine-b1be2",
+    "storage_bucket": "hungryengine-b1be2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688927287316:android:04162dc9045f7da0289f01",
+        "android_client_info": {
+          "package_name": "com.example.hungry_engine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "688927287316-jae7bfu1jfog704eeas387bu4hahtbck.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc6mT96o_dyG8e9DXLjyXseredOOk0ATU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "688927287316-jae7bfu1jfog704eeas387bu4hahtbck.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
