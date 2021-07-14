@@ -95,31 +95,35 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: (_namecontroller.text.isNotEmpty &&
-                          _mobilecontroller.text.length == 10)
-                      ? () async {
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc('+91${_mobilecontroller.text}')
-                              .set({
-                            'name': _namecontroller.text,
-                            'mobile_number': '+91${_mobilecontroller.text}',
-                          });
-                          Navigator.pushNamed(context, "/searchitem");
-                        }
-                      : () {
-                          print(_namecontroller);
-                          print(_mobilecontroller.text.length);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                _namecontroller.text.isEmpty
-                                    ? 'Please Enter your Name'
-                                    : 'Please check your Mobile Number',
-                              ),
-                            ),
-                          );
-                        },
+                  onPressed: () async {
+                    if (_namecontroller.text.isEmpty ||
+                        _mobilecontroller.text.length != 10) {
+                      return ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            _namecontroller.text.isEmpty
+                                ? 'Please Enter your Name'
+                                : 'Please check your Mobile Number',
+                          ),
+                        ),
+                      );
+                    }
+                    var documents = await FirebaseFirestore.instance
+                        .collection('users')
+                        .where('mobile_number',
+                            isEqualTo: '+91${_mobilecontroller.text}')
+                        .get();
+                    if (documents.docs.length == 0) {
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc('+91${_mobilecontroller.text}')
+                          .set({
+                        'name': _namecontroller.text,
+                        'mobile_number': '+91${_mobilecontroller.text}',
+                      });
+                    }
+                    Navigator.pushNamed(context, "/searchitem");
+                  },
                   style: ElevatedButton.styleFrom(
                     primary: Color(0xffFF4A32).withOpacity(0.9),
                     shadowColor: Colors.grey,
@@ -127,6 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(25),
                       ),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
                     ),
                   ),
                   // style: ButtonStyle(
