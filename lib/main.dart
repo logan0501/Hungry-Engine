@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      initialRoute: "/",
+      initialRoute: "/searchitem",
       routes:{"/":(context)=>MyHomePage(),
       "/searchitem":(context)=>SearchItem()},
     );
