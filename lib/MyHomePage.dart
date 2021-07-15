@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -108,21 +107,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       );
                     }
-                    var documents = await FirebaseFirestore.instance
-                        .collection('users')
-                        .where('mobile_number',
-                            isEqualTo: '+91${_mobilecontroller.text}')
-                        .get();
-                    if (documents.docs.length == 0) {
-                      await FirebaseFirestore.instance
-                          .collection('users')
-                          .doc('+91${_mobilecontroller.text}')
-                          .set({
-                        'name': _namecontroller.text,
-                        'mobile_number': '+91${_mobilecontroller.text}',
-                      });
-                    }
-                    Navigator.pushNamed(context, "/searchitem");
+                    Navigator.pushNamed(context, "/searchitem", arguments: {
+                      'phoneNumber': _mobilecontroller.text,
+                      'name': _namecontroller.text,
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Color(0xffFF4A32).withOpacity(0.9),

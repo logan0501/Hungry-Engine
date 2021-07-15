@@ -4,13 +4,13 @@ class FoodItem {
   int id;
   int count;
   String name;
-  int cost;
+  double cost;
   TextEditingController controller;
-  FoodItem(id,cost, name) {
+  FoodItem(id, cost, name) {
     this.id = id;
     this.name = name;
     count = 0;
-    this.cost=cost;
+    this.cost = cost;
     controller = TextEditingController(text: count.toString());
   }
 
@@ -19,21 +19,22 @@ class FoodItem {
   }
 
   void increment() {
-    count = int.parse(count.toString())+1;
-    controller.text=count.toString();
+    count = int.parse(count.toString()) + 1;
+    controller.text = count.toString();
   }
-  void setcount(int c){
-    count = c;
 
+  void setcount(int c) {
+    count = c;
   }
+
   void decrement() {
-    count= int.parse(count.toString());
+    count = int.parse(count.toString());
     if (count != 0) {
-     count--;
+      count--;
     } else {
       count = 0;
     }
-    controller.text=count.toString();
+    controller.text = count.toString();
   }
 
   String getFoodName() {

@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hungry_engine/SearchItem.dart';
+import 'package:hungry_engine/add_item.dart';
+import 'package:hungry_engine/checkout_page.dart';
 
 import 'MyHomePage.dart';
 
@@ -20,9 +22,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: "/searchitem",
-      routes:{"/":(context)=>MyHomePage(),
-      "/searchitem":(context)=>SearchItem()},
+      initialRoute: "/",
+      debugShowCheckedModeBanner: false,
+      routes: {
+        "/": (context) => MyHomePage(),
+        "/searchitem": (context) => SearchItem(),
+        "/checkout": (context) => CheckoutPage(),
+        "/add-item": (context) => AddItem(),
+      },
     );
   }
 }
