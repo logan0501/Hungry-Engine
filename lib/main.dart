@@ -20,11 +20,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => MyHomePage(),
-        "/searchitem": (context) => SearchItem()
-      },
+      initialRoute: "/searchitem",
+      routes:{"/":(context)=>MyHomePage(),
+      "/searchitem":(context)=>SearchItem()},
     );
   }
 }
