@@ -33,14 +33,22 @@ dependencies:
   intl: ^0.17.0
   firebase_storage: ^9.0.0
   flutter_sms: ^2.3.1
+  
+
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: "^0.8.0"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
+flutter_icons:
+   android: "launcher_icon"
+   ios: true
+   image_path: "./assets/icon/logo.jpg"
 flutter:
 
   # The following line ensures that the Material Icons font is
