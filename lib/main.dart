@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hungry_engine/SearchItem.dart';
 import 'package:hungry_engine/add_item.dart';
 import 'package:hungry_engine/checkout_page.dart';
+import 'package:hungry_engine/view_orders.dart';
 
 import 'MyHomePage.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         "/searchitem": (context) => SearchItem(),
         "/checkout": (context) => CheckoutPage(),
         "/add-item": (context) => AddItem(),
+        '/view-orders': (context) => ViewOrders(),
       },
     );
   }

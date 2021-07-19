@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hungry_engine/FoodItem.dart';
@@ -10,20 +11,31 @@ class SearchItem extends StatefulWidget {
 class _SearchItemState extends State<SearchItem> {
   List<FoodItem> finalist = [];
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-  List<FoodItem> fooditems = [
-    FoodItem(1, 12.0, "MASALA DOSA"),
-    FoodItem(2, 30.0, "DOSA"),
-    FoodItem(3, 40.0, "PODI DOSA"),
-    FoodItem(4, 60.0, "PODI DOSA 2"),
-    FoodItem(5, 90.0, "PODI DOSA 3"),
-  ];
-
+  List<FoodItem> fooditems = [];
   List<FoodItem> items = [];
+  var isLoading = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    items.addAll(fooditems);
+    setState(() {
+      isLoading = true;
+    });
+    FirebaseFirestore.instance.collection('foods').get().then((foods) {
+      foods.docs.forEach((e) {
+        fooditems.add(
+          FoodItem(
+            e.data()['foodId'],
+            double.parse(e.data()['foodCost'].toString()),
+            e.data()['foodName'],
+          ),
+        );
+      });
+      setState(() {
+        items.addAll(fooditems);
+        isLoading = false;
+      });
+    });
   }
 
   void filtersearch(String query) {
@@ -103,157 +115,168 @@ class _SearchItemState extends State<SearchItem> {
                   ),
                 ),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      'View Details',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed('/view-orders');
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15.0, horizontal: 20),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info,
+                        size: 20,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        'View Details',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        body: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                  )
-                ],
-              ),
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: Row(
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        _scaffoldKey.currentState.openDrawer();
-                      },
-                      icon: Icon(Icons.menu)),
-                  Expanded(
-                    child: TextField(
-                      onChanged: (val) {
-                        filtersearch(val);
-                      },
-                      style: TextStyle(
-                        fontSize: 23,
-                      ),
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 17, horizontal: 20),
-                        hintText: 'Search Food Items',
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        fooditems.forEach((element) {
-                          setState(() {
-                            element.controller.text = "0";
-                            element.count = 0;
-                          });
-                        });
-                        finalist.clear();
-                      },
-                      icon: Icon(Icons.clear_all)),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                physics: AlwaysScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ExpansionTile(
-                      title: Text('${items[index].name}'),
-                      children: [
-                        SingleChildScrollView(
-                          child: Container(
-                            width: 200,
-                            child: TextFormField(
-                              onChanged: (val) {
-                                items[index].setcount(int.parse(val));
-                              },
-                              controller: items[index].controller,
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                prefixIcon: IconButton(
-                                  icon: Icon(Icons.remove),
-                                  onPressed: () {
-                                    setState(() {
-                                      items[index].decrement();
-                                    });
-                                  },
-                                ),
-                                suffixIcon: IconButton(
-                                  icon: Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      items[index].increment();
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          spreadRadius: 1,
+                          blurRadius: 3,
                         )
                       ],
                     ),
-                  );
-                },
-                itemCount: items.length,
+                    margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    child: Row(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              _scaffoldKey.currentState.openDrawer();
+                            },
+                            icon: Icon(Icons.menu)),
+                        Expanded(
+                          child: TextField(
+                            onChanged: (val) {
+                              filtersearch(val);
+                            },
+                            style: TextStyle(
+                              fontSize: 23,
+                            ),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 17, horizontal: 20),
+                              hintText: 'Search Food Items',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              fooditems.forEach((element) {
+                                setState(() {
+                                  element.controller.text = "0";
+                                  element.count = 0;
+                                });
+                              });
+                              finalist.clear();
+                            },
+                            icon: Icon(Icons.clear_all)),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ExpansionTile(
+                            title: Text('${items[index].name}'),
+                            children: [
+                              SingleChildScrollView(
+                                child: Container(
+                                  width: 200,
+                                  child: TextFormField(
+                                    onChanged: (val) {
+                                      items[index].setcount(int.parse(val));
+                                    },
+                                    controller: items[index].controller,
+                                    keyboardType: TextInputType.number,
+                                    style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    decoration: InputDecoration(
+                                      prefixIcon: IconButton(
+                                        icon: Icon(Icons.remove),
+                                        onPressed: () {
+                                          setState(() {
+                                            items[index].decrement();
+                                          });
+                                        },
+                                      ),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(Icons.add),
+                                        onPressed: () {
+                                          setState(() {
+                                            items[index].increment();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                      itemCount: items.length,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: Container(
-          height: 50,
-          width: double.infinity,
-          child: GestureDetector(
-            child: Center(
-                child: Text(
-              'Check Out',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
+        bottomNavigationBar: isLoading
+            ? Container()
+            : GestureDetector(
+                onTap: () => addfinallist(username, phoneNumber),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: Center(
+                      child: Text(
+                    'Check Out',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
+                  decoration: BoxDecoration(
+                    color: Color(0xffFFAD4B),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                ),
               ),
-            )),
-            onTap: () => addfinallist(username, phoneNumber),
-          ),
-          decoration: BoxDecoration(
-            color: Color(0xffFFAD4B),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 15),
-        ),
       ),
     );
   }
@@ -266,6 +289,15 @@ class _SearchItemState extends State<SearchItem> {
         print("new" + element.name);
       }
     });
+    if (finalist.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Add Some Items before proceeding to checkout.'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
     Navigator.of(context).pushNamed('/checkout', arguments: {
       'finalList': finalist,
       'name': userName,

@@ -9,6 +9,12 @@ class _MyHomePageState extends State<MyHomePage> {
   String name, mobile;
   TextEditingController _namecontroller = TextEditingController();
   TextEditingController _mobilecontroller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

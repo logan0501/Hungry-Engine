@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class FoodItem {
-  int id;
+  String id;
   int count;
   String name;
   double cost;

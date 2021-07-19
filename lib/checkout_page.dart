@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:hungry_engine/FoodItem.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
@@ -12,7 +12,6 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  static const platform = const MethodChannel('sendSms');
   double totalPrice = 0.0;
 
   @override
@@ -77,7 +76,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       ),
                       title: Text(finalList[index].name),
                       subtitle: Text(
-                        '${finalList[index].count.toString()} Pcs X Rs: ${finalList[index].cost.toString() ?? 20.00}',
+                        '${finalList[index].count.toString()} Pcs X INR: ${finalList[index].cost.toString() ?? 20.00}',
                       ),
                       trailing: Container(
                         height: 50,
@@ -94,7 +93,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                         child: FittedBox(
                           child: Text(
-                            'Rs: ${finalList[index].count * (finalList[index].cost)}',
+                            'INR: ${finalList[index].count * (finalList[index].cost)}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -146,6 +145,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 'totalAmount': totalPrice,
                 'orderedAt': DateTime.now(),
               });
+              Navigator.popUntil(
+                  context, ModalRoute.withName(Navigator.defaultRouteName));
             },
             child: Container(
               width: double.infinity,

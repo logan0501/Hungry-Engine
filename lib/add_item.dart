@@ -86,57 +86,58 @@ class _AddItemState extends State<AddItem> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
-                GestureDetector(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15),
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xffFFAD4B),
-                    ),
-                    child: Center(
-                        child: Text(
-                      'Add Food',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    final doc =
-                        FirebaseFirestore.instance.collection('foods').doc();
-                    FirebaseFirestore.instance
-                        .collection('foods')
-                        .doc(doc.id)
-                        .set({
-                      'foodName': foodNameController.text,
-                      'foodCost': foodCostController.text,
-                      'foodId': doc.id,
-                    });
-                    setState(() {
-                      isLoading = false;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            '${foodNameController.text} was added successfully...'),
-                        duration: Duration(
-                          seconds: 2,
-                        ),
-                      ),
-                    );
-                  },
-                )
               ],
             ),
+      bottomNavigationBar: GestureDetector(
+        child: Container(
+          width: double.infinity,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Color(0xffFFAD4B),
+          ),
+          child: Center(
+              child: Text(
+            'Add Food',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          )),
+        ),
+        onTap: () {
+          if (foodNameController.text.isEmpty ||
+              foodNameController.text.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Food Name and Food Cost -> Required.'),
+              ),
+            );
+            return;
+          }
+          setState(() {
+            isLoading = true;
+          });
+          final doc = FirebaseFirestore.instance.collection('foods').doc();
+          FirebaseFirestore.instance.collection('foods').doc(doc.id).set({
+            'foodName': foodNameController.text,
+            'foodCost': foodNameController.text,
+            'foodId': doc.id,
+          });
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text('${foodNameController.text} was added successfully...'),
+              duration: Duration(
+                seconds: 2,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
