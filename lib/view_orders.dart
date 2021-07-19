@@ -151,16 +151,21 @@ class _ViewOrdersState extends State<ViewOrders> {
             ),
           ),
           Spacer(),
-          Container(
-            child: Text(
-              'Total Orders: ${orders.length}',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
+          FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              future: FirebaseFirestore.instance.collection('orders').get(),
+              builder: (context, snapshot) {
+                print(snapshot.data.docs.length);
+                return Container(
+                  child: Text(
+                    'Total Orders: ${snapshot.data.docs.length}',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                );
+              }),
           // Container(
           //   child: Text(
           //     'Total Revenue Generated: INR ${orders.length}',
