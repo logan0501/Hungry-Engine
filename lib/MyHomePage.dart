@@ -111,6 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       'phoneNumber': _mobilecontroller.text,
                       'name': _namecontroller.text,
                     });
+                    _namecontroller.clear();
+                    _mobilecontroller.clear();
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Color(0xffFF4A32).withOpacity(0.9),
