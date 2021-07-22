@@ -11,6 +11,7 @@ class SearchItem extends StatefulWidget {
 class _SearchItemState extends State<SearchItem> {
   List<FoodItem> finalist = [];
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
   List<FoodItem> fooditems = [];
   List<FoodItem> items = [];
   var isLoading = false;
@@ -59,6 +60,28 @@ class _SearchItemState extends State<SearchItem> {
         items.addAll(fooditems);
       });
     }
+  }
+
+  Future<void> onRefresh() {
+    fooditems = [];
+    refreshKey.currentState?.show(atTop: false);
+    FirebaseFirestore.instance.collection('foods').get().then((foods) {
+      foods.docs.forEach((e) {
+        fooditems.add(
+          FoodItem(
+            e.data()['foodId'],
+            double.parse(e.data()['foodCost'].toString()),
+            e.data()['foodName'],
+          ),
+        );
+      });
+      setState(() {
+        items = [];
+        items.addAll(fooditems);
+        isLoading = false;
+      });
+    });
+    return Future.delayed(Duration(seconds: 2));
   }
 
   @override
@@ -146,114 +169,119 @@ class _SearchItemState extends State<SearchItem> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                        )
-                      ],
-                    ),
-                    margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                    child: Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              _scaffoldKey.currentState.openDrawer();
-                            },
-                            icon: Icon(Icons.menu)),
-                        Expanded(
-                          child: TextField(
-                            onChanged: (val) {
-                              filtersearch(val);
-                            },
-                            style: TextStyle(
-                              fontSize: 23,
-                            ),
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 17, horizontal: 20),
-                              hintText: 'Search Food Items',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
+            : RefreshIndicator(
+                key: refreshKey,
+                onRefresh: onRefresh,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                          )
+                        ],
+                      ),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      child: Row(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                _scaffoldKey.currentState.openDrawer();
+                              },
+                              icon: Icon(Icons.menu)),
+                          Expanded(
+                            child: TextField(
+                              onChanged: (val) {
+                                filtersearch(val);
+                              },
+                              style: TextStyle(
+                                fontSize: 23,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 17, horizontal: 20),
+                                hintText: 'Search Food Items',
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              fooditems.forEach((element) {
-                                setState(() {
-                                  element.controller.text = "0";
-                                  element.count = 0;
+                          IconButton(
+                              onPressed: () {
+                                fooditems.forEach((element) {
+                                  setState(() {
+                                    element.controller.text = "0";
+                                    element.count = 0;
+                                  });
                                 });
-                              });
-                              finalist.clear();
-                            },
-                            icon: Icon(Icons.clear_all)),
-                      ],
+                                finalist.clear();
+                              },
+                              icon: Icon(Icons.clear_all)),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ExpansionTile(
-                            title: Text('${items[index].name}'),
-                            children: [
-                              SingleChildScrollView(
-                                child: Container(
-                                  width: 200,
-                                  child: TextFormField(
-                                    onChanged: (val) {
-                                      items[index].setcount(int.parse(val));
-                                    },
-                                    controller: items[index].controller,
-                                    keyboardType: TextInputType.number,
-                                    style: TextStyle(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                      prefixIcon: IconButton(
-                                        icon: Icon(Icons.remove),
-                                        onPressed: () {
-                                          setState(() {
-                                            items[index].decrement();
-                                          });
-                                        },
+                    Expanded(
+                      child: ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ExpansionTile(
+                              title: Text('${items[index].name}'),
+                              children: [
+                                SingleChildScrollView(
+                                  child: Container(
+                                    width: 200,
+                                    child: TextFormField(
+                                      onChanged: (val) {
+                                        items[index].setcount(int.parse(val));
+                                      },
+                                      controller: items[index].controller,
+                                      keyboardType: TextInputType.number,
+                                      style: TextStyle(
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(Icons.add),
-                                        onPressed: () {
-                                          setState(() {
-                                            items[index].increment();
-                                          });
-                                        },
+                                      textAlign: TextAlign.center,
+                                      decoration: InputDecoration(
+                                        prefixIcon: IconButton(
+                                          icon: Icon(Icons.remove),
+                                          onPressed: () {
+                                            setState(() {
+                                              items[index].decrement();
+                                            });
+                                          },
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(Icons.add),
+                                          onPressed: () {
+                                            setState(() {
+                                              items[index].increment();
+                                            });
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                      itemCount: items.length,
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                        itemCount: items.length,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
         bottomNavigationBar: isLoading
             ? Container()

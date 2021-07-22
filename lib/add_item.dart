@@ -107,7 +107,7 @@ class _AddItemState extends State<AddItem> {
         ),
         onTap: () {
           if (foodNameController.text.isEmpty ||
-              foodNameController.text.isEmpty) {
+              foodCostController.text.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Food Name and Food Cost -> Required.'),
@@ -121,12 +121,10 @@ class _AddItemState extends State<AddItem> {
           final doc = FirebaseFirestore.instance.collection('foods').doc();
           FirebaseFirestore.instance.collection('foods').doc(doc.id).set({
             'foodName': foodNameController.text,
-            'foodCost': foodNameController.text,
+            'foodCost': foodCostController.text,
             'foodId': doc.id,
           });
-          setState(() {
-            isLoading = false;
-          });
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content:
@@ -136,6 +134,7 @@ class _AddItemState extends State<AddItem> {
               ),
             ),
           );
+          Navigator.of(context).pop();
         },
       ),
     );
