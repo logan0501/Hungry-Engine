@@ -124,17 +124,18 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
           GestureDetector(
             onTap: () async {
+              double total=0;
               String messageString = '';
               finalList.forEach((element) {
                 messageString +=
                     '${element.name} ---- ${element.count} Pcs X Rs ${element.cost} = Rs ${element.count * element.cost}\n';
-                return totalPrice += element.cost * element.count;
+                return total += element.cost * element.count;
               });
-              print(totalPrice);
+              print(total);
               List<String> recipients = ['+91$phoneNumber'];
               String _result = await sendSMS(
                 message:
-                    "Order has been processed\nTotal Amount: $totalPrice\nOrder Details: \n$messageString \nHappy Shopping - Hungry Engine",
+                    "Order has been processed\nTotal Amount: $total\nOrder Details: \n$messageString \nHappy Fooding - Hungry Engine",
                 recipients: recipients,
               ).catchError((onError) {
                 print(onError);
@@ -151,7 +152,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     'total': e.cost * e.count,
                   };
                 }).toList(),
-                'totalAmount': totalPrice,
+                'totalAmount': total,
                 'orderedAt': DateTime.now(),
               });
               Navigator.popUntil(

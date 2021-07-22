@@ -1,11 +1,9 @@
-
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:excel/excel.dart';
-
 
 class ViewOrders extends StatefulWidget {
   const ViewOrders();
@@ -175,42 +173,52 @@ class _ViewOrdersState extends State<ViewOrders> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
-
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      IconButton(onPressed: () async{
-                        final directory = await getExternalStorageDirectory();
-                        var excel = Excel.createExcel();           //create an excel sheet
-                        Sheet sheetObject = excel['Sheet1'];
-                        var cell = sheetObject.cell(CellIndex.indexByString("A1"));
-                        cell.value = 8; // Insert value to selected cell;
-                        FirebaseFirestore.instance.collection('orders').get().then((_qs){
-
-                for (int i = 0; i < _qs.docs.length; i++) {
-
-                  var namecell = sheetObject.cell(CellIndex.indexByString("A" + (i+1).toString()));   //i+1 means when the loop iterates every time it will write values in new row, e.g A1, A2, ...
-                namecell.value =  _qs.docs[i].data()['name']; // Insert value to selected cell;
-                var phonecell =  sheetObject.cell(CellIndex.indexByString("B" + (i+1).toString()));
-                phonecell.value =  _qs.docs[i].data()['phoneNumber'];
-                var amountcell =  sheetObject.cell(CellIndex.indexByString("C" + (i+1).toString()));
-                  amountcell.value =  _qs.docs[i].data()['totalAmount'];
-                  var datecell =  sheetObject.cell(CellIndex.indexByString("D" + (i+1).toString()));
-                  datecell.value =  _qs.docs[i].data()['orderedAt'].toDate().day.toString()+"/"+_qs.docs[i].data()['orderedAt'].toDate().month.toString()+"/"+_qs.docs[i].data()['orderedAt'].toDate().year.toString();
-                  var foodnamecell = sheetObject.cell(CellIndex.indexByString("E" + (i+1).toString()));
-                  foodnamecell.value =  _qs.docs[i].data()['items'].map((item)=>{item['foodName']}).toList().join(",");
-                }
-
-                excel.encode().then((onValue) {
-                  File(join("${directory.path}/${DateTime.now().millisecondsSinceEpoch.toString()}.xlsx"))
-                    ..createSync(recursive: true)
-                    ..writeAsBytesSync(onValue);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("File saved at ${directory.path}")));
-                });
-                });
-
-                      },
-                          icon:Icon(Icons.download,color: Colors.white,))
+                      IconButton(
+                          onPressed: () async {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('AlertDialog Title'),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: const <Widget>[
+                                          Text('Delete and Download'),
+                                          Text(
+                                              'Would you like to delete data from firebase and download as excel.'),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('Cancel'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text('Download'),
+                                        onPressed: () {
+                                          saveexcel(context);
+                                          FirebaseFirestore.instance.collection('orders').get().then((snapshot) {
+                                            for (DocumentSnapshot doc in snapshot.docs) {
+                                              doc.reference.delete();
+                                            }
+                                          });
+                              Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
+                          icon: Icon(
+                            Icons.download,
+                            color: Colors.white,
+                          ))
                     ],
                   ),
                 );
@@ -225,9 +233,55 @@ class _ViewOrdersState extends State<ViewOrders> {
           //     ),
           //   ),
           // ),
-
         ],
       ),
     );
+  }
+
+  Future<void> saveexcel(context) async {
+    final directory = await getExternalStorageDirectory();
+    var excel = Excel.createExcel(); //create an excel sheet
+    Sheet sheetObject = excel['Sheet1'];
+    var cell = sheetObject.cell(CellIndex.indexByString("A1"));
+    cell.value = 8; // Insert value to selected cell;
+    FirebaseFirestore.instance.collection('orders').get().then((_qs) {
+      for (int i = 0; i < _qs.docs.length; i++) {
+        var namecell = sheetObject.cell(CellIndex.indexByString("A" +
+            (i + 1)
+                .toString())); //i+1 means when the loop iterates every time it will write values in new row, e.g A1, A2, ...
+        namecell.value =
+            _qs.docs[i].data()['name']; // Insert value to selected cell;
+        var phonecell =
+            sheetObject.cell(CellIndex.indexByString("B" + (i + 1).toString()));
+        phonecell.value = _qs.docs[i].data()['phoneNumber'];
+        var amountcell =
+            sheetObject.cell(CellIndex.indexByString("C" + (i + 1).toString()));
+        amountcell.value = _qs.docs[i].data()['totalAmount'];
+        var datecell =
+            sheetObject.cell(CellIndex.indexByString("D" + (i + 1).toString()));
+        datecell.value =
+            _qs.docs[i].data()['orderedAt'].toDate().day.toString() +
+                "/" +
+                _qs.docs[i].data()['orderedAt'].toDate().month.toString() +
+                "/" +
+                _qs.docs[i].data()['orderedAt'].toDate().year.toString();
+        var foodnamecell =
+            sheetObject.cell(CellIndex.indexByString("E" + (i + 1).toString()));
+        foodnamecell.value = _qs.docs[i]
+            .data()['items']
+            .map((item) => {item['foodName']})
+            .toList()
+            .join(",");
+      }
+
+      excel.encode().then((onValue) {
+        File(join(
+            "${directory.path}/${DateTime.now().millisecondsSinceEpoch.toString()}.xlsx"))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(onValue);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("File saved at ${directory.path}")));
+      });
+    });
   }
 }
