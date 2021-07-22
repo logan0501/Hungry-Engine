@@ -22,6 +22,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
         as Map<String, dynamic>)['name'];
     final phoneNumber = (ModalRoute.of(context).settings.arguments
         as Map<String, dynamic>)['phoneNumber'];
+    double caltotal(){
+      finalList.forEach((element) => totalPrice += element.cost * element.count);
+      return totalPrice;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('CheckOut'),
@@ -58,6 +62,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     ),
                     Text('Name: $name'),
                     Text('Phone Number: $phoneNumber'),
+                    Text('Total: ${caltotal()}',style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),)
+
                   ],
                 ),
               ),

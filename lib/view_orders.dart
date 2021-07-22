@@ -64,8 +64,9 @@ class _ViewOrdersState extends State<ViewOrders> {
       ),
       body: Column(
         children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.8,
+          Expanded(
+            flex: 6,
+            // height: MediaQuery.of(context).size.height * 0.8,
             child: ListView.builder(
               controller: scrollController,
               physics: AlwaysScrollableScrollPhysics(),
@@ -150,17 +151,22 @@ class _ViewOrdersState extends State<ViewOrders> {
               itemCount: orders.length,
             ),
           ),
-          Spacer(),
+
           FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
               future: FirebaseFirestore.instance.collection('orders').get(),
               builder: (context, snapshot) {
                 print(snapshot.data.docs.length);
                 return Container(
+                  padding: EdgeInsets.all(10),
+                  color: Colors.orange,
+                  width: double.infinity,
                   child: Text(
                     'Total Orders: ${snapshot.data.docs.length}',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 18,
+
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -176,7 +182,7 @@ class _ViewOrdersState extends State<ViewOrders> {
           //     ),
           //   ),
           // ),
-          Spacer(),
+
         ],
       ),
     );

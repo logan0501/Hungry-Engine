@@ -15,7 +15,7 @@ class _SearchItemState extends State<SearchItem> {
   List<FoodItem> fooditems = [];
   List<FoodItem> items = [];
   var isLoading = false;
-
+  int selected = 0;
   @override
   void initState() {
     super.initState();
@@ -229,29 +229,43 @@ class _SearchItemState extends State<SearchItem> {
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ExpansionTile(
-                              title: Text('${items[index].name}'),
-                              children: [
-                                SingleChildScrollView(
-                                  child: Container(
-                                    width: 200,
-                                    child: TextFormField(
-                                      onChanged: (val) {
-                                        items[index].setcount(int.parse(val));
-                                      },
-                                      controller: items[index].controller,
-                                      keyboardType: TextInputType.number,
-                                      style: TextStyle(
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
+
+                  Expanded(
+                    child:ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ExpansionTile(
+                            key: Key('builder' + selected.toString()),
+                            initiallyExpanded: index == selected,
+                            onExpansionChanged: ((newstate) {
+                              if (newstate) {
+                                setState(() {
+                                  selected = index;
+                                });
+                              } else {
+                                setState(() {
+                                  selected = -1;
+                                });
+                              }
+                            }),
+                            title: Text('${items[index].name}'),
+                            children: [
+                              SingleChildScrollView(
+                                child: Container(
+                                  width: 200,
+                                  child: TextFormField(
+                                    onChanged: (val) {
+                                      items[index].setcount(int.parse(val));
+                                    },
+                                    controller: items[index].controller,
+                                    keyboardType: TextInputType.number,
+                                    style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
                                       decoration: InputDecoration(
                                         prefixIcon: IconButton(
                                           icon: Icon(Icons.remove),
@@ -280,9 +294,10 @@ class _SearchItemState extends State<SearchItem> {
                         itemCount: items.length,
                       ),
                     ),
-                  ],
-                ),
-              ),
+
+
+                ],
+    ),),
         bottomNavigationBar: isLoading
             ? Container()
             : GestureDetector(
@@ -333,3 +348,33 @@ class _SearchItemState extends State<SearchItem> {
     });
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// child: StreamBuilder(
+//                       stream: FirebaseFirestore.instance.collection("foods").snapshots(),
+//                       builder: (context,snapshot){
+//                         if(!snapshot.hasData){
+//                           return Text('Empty Menu');
+//                         }else{
+//                         final items = snapshot.data.documents;
+                  
+//                         return Text(items[0]["foodname"]);
+//                         }
+//                       },
+//                     )
