@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddItem extends StatefulWidget {
@@ -10,7 +11,8 @@ class _AddItemState extends State<AddItem> {
   final TextEditingController foodNameController = TextEditingController();
   final TextEditingController foodCostController = TextEditingController();
   bool isLoading = false;
-
+  List<dynamic> fooditems=[];
+  var docid=null;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +39,7 @@ class _AddItemState extends State<AddItem> {
             )
           : Column(
               children: [
-                SizedBox(
-                  height: 60,
-                ),
+
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                   child: TextField(
@@ -86,6 +86,48 @@ class _AddItemState extends State<AddItem> {
                     ),
                   ),
                 ),
+                Expanded(
+                  child: StreamBuilder (
+                    stream: FirebaseFirestore.instance.collection('foods').snapshots(),
+                   builder: (context,snapshot){
+
+                        fooditems = snapshot.data.docs??[];
+
+
+                      return ListView.builder(
+                      itemCount: fooditems.length,
+                        itemBuilder: (context,index){
+                        return Card(
+                          child: ListTile(
+                            key:Key(fooditems[index].data()['foodId']),
+                            title: GestureDetector(
+                              onTap: (){
+                                foodNameController.text = fooditems[index].data()['foodName'];
+                                foodCostController.text = '${fooditems[index].data()['foodCost']}';
+
+                                setState(() {
+                                  docid=fooditems[index].data()['foodId'];
+                                });
+
+                              },
+                              child: Text(fooditems[index].data()['foodName'],
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500
+                              ),),
+                            ),
+                            trailing: IconButton(
+                              onPressed: () async{
+                               await FirebaseFirestore.instance.collection('foods').doc(fooditems[index].data()['foodId']).delete();
+                                foodNameController.clear();
+                                foodCostController.clear();
+                               },
+                                icon:Icon(Icons.delete,color: Colors.orange,)),
+                          ),
+                        );
+                        });}
+                  ),
+                )
               ],
             ),
       bottomNavigationBar: GestureDetector(
@@ -105,7 +147,7 @@ class _AddItemState extends State<AddItem> {
             ),
           )),
         ),
-        onTap: () {
+        onTap: docid==null?() {
           if (foodNameController.text.isEmpty ||
               foodCostController.text.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -134,7 +176,46 @@ class _AddItemState extends State<AddItem> {
               ),
             ),
           );
-          Navigator.of(context).pop();
+          foodNameController.clear();
+          foodCostController.clear();
+          setState(() {
+            isLoading = false;
+          });
+        }:(){
+          if (foodNameController.text.isEmpty ||
+              foodCostController.text.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Food Name and Food Cost -> Required.'),
+              ),
+            );
+            return;
+          }
+          setState(() {
+            isLoading = true;
+          });
+
+          FirebaseFirestore.instance.collection('foods').doc(docid).set({
+            'foodName': foodNameController.text,
+            'foodCost': foodCostController.text,
+            'foodId': docid,
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+              Text('${foodNameController.text} was updated successfully...'),
+              duration: Duration(
+                seconds: 2,
+              ),
+            ),
+          );
+          docid=null;
+          foodNameController.clear();
+          foodCostController.clear();
+          setState(() {
+            isLoading = false;
+          });
         },
       ),
     );

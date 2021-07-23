@@ -13,6 +13,7 @@ class ViewOrders extends StatefulWidget {
 }
 
 class _ViewOrdersState extends State<ViewOrders> {
+  var isLoading=false;
   List<dynamic> orders = [];
   ScrollController scrollController;
 
@@ -25,10 +26,14 @@ class _ViewOrdersState extends State<ViewOrders> {
   }
 
   Future<void> fetchFirstOrders() async {
+    setState(() {
+      isLoading=true;
+    });
     final orderList =
         await FirebaseFirestore.instance.collection('orders').limit(7).get();
     setState(() {
       orders.addAll(orderList.docs);
+      isLoading=false;
     });
   }
 
@@ -71,7 +76,9 @@ class _ViewOrdersState extends State<ViewOrders> {
           Expanded(
             flex: 6,
             // height: MediaQuery.of(context).size.height * 0.8,
-            child: ListView.builder(
+            child: isLoading?Center(
+              child: CircularProgressIndicator(),
+            ):ListView.builder(
               controller: scrollController,
               physics: AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
