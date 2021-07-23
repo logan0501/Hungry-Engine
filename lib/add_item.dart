@@ -90,7 +90,9 @@ class _AddItemState extends State<AddItem> {
                   child: StreamBuilder (
                     stream: FirebaseFirestore.instance.collection('foods').snapshots(),
                    builder: (context,snapshot){
-
+      if(snapshot.connectionState==ConnectionState.waiting){
+        return Center(child: Text('Loading'));
+      }
                         fooditems = snapshot.data.docs??[];
 
 

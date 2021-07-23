@@ -166,6 +166,10 @@ class _ViewOrdersState extends State<ViewOrders> {
           FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
               future: FirebaseFirestore.instance.collection('orders').get(),
               builder: (context, snapshot) {
+                if(snapshot.connectionState == ConnectionState.waiting){
+
+                   return Center(child: Text('loading'));
+                }
                 print(snapshot.data.docs.length);
                 return Container(
                   padding: EdgeInsets.all(10),
