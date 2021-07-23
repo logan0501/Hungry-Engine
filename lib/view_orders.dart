@@ -13,7 +13,7 @@ class ViewOrders extends StatefulWidget {
 }
 
 class _ViewOrdersState extends State<ViewOrders> {
-  var isLoading=false;
+  var isLoading = false;
   List<dynamic> orders = [];
   ScrollController scrollController;
 
@@ -27,13 +27,13 @@ class _ViewOrdersState extends State<ViewOrders> {
 
   Future<void> fetchFirstOrders() async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     final orderList =
         await FirebaseFirestore.instance.collection('orders').limit(7).get();
     setState(() {
       orders.addAll(orderList.docs);
-      isLoading=false;
+      isLoading = false;
     });
   }
 
@@ -60,7 +60,7 @@ class _ViewOrdersState extends State<ViewOrders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('CheckOut'),
+        title: Text('View Orders'),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
@@ -76,164 +76,95 @@ class _ViewOrdersState extends State<ViewOrders> {
           Expanded(
             flex: 6,
             // height: MediaQuery.of(context).size.height * 0.8,
-            child: isLoading?Center(
-              child: CircularProgressIndicator(),
-            ):ListView.builder(
-              controller: scrollController,
-              physics: AlwaysScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Container(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                        child: Text(
-                          'Customer Name: ${orders[index].data()['name']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                        child: Text(
-                          'Phone Number: ${orders[index].data()['phoneNumber']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                        child: Text(
-                          'Order Total: INR ${orders[index].data()['totalAmount']}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      ...orders[index].data()['items'].map((e) {
-                        return Container(
-                          padding: EdgeInsets.only(top: 5, left: 20, right: 20),
-                          child: Row(
-                            children: [
-                              Text(
-                                '${e['foodName']}',
+            child: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView.builder(
+                    controller: scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 2),
+                              child: Text(
+                                'Customer Name: ${orders[index].data()['name']}',
                                 style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 12,
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 2),
+                              child: Text(
+                                'Phone Number: ${orders[index].data()['phoneNumber']}',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Spacer(),
-                              Text(
-                                'INR ${e['itemCost']}',
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 2),
+                              child: Text(
+                                'Order Total: INR ${orders[index].data()['totalAmount']}',
                                 style: TextStyle(
-                                  color: Colors.black45,
-                                  fontSize: 12,
+                                  color: Colors.black,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            ],
-                          ),
-                        );
-                      }),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                );
-              },
-              itemCount: orders.length,
-            ),
-          ),
-
-          FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              future: FirebaseFirestore.instance.collection('orders').get(),
-              builder: (context, snapshot) {
-                if(snapshot.connectionState == ConnectionState.waiting){
-
-                   return Center(child: Text('loading'));
-                }
-                print(snapshot.data.docs.length);
-                return Container(
-                  padding: EdgeInsets.all(10),
-                  color: Colors.orange,
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        'Total Orders: ${snapshot.data.docs.length}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      IconButton(
-                          onPressed: () async {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('AlertDialog Title'),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(
-                                        children: const <Widget>[
-                                          Text('Delete and Download'),
-                                          Text(
-                                              'Would you like to delete data from firebase and download as excel.'),
-                                        ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            ...orders[index].data()['items'].map((e) {
+                              return Container(
+                                padding: EdgeInsets.only(
+                                    top: 5, left: 20, right: 20),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '${e['foodName']}',
+                                      style: TextStyle(
+                                        color: Colors.black45,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('Cancel'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                                    Spacer(),
+                                    Text(
+                                      'INR ${e['itemCost']}',
+                                      style: TextStyle(
+                                        color: Colors.black45,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                      TextButton(
-                                        child: const Text('Download'),
-                                        onPressed: () {
-                                          saveexcel(context);
-                                          FirebaseFirestore.instance.collection('orders').get().then((snapshot) {
-                                            for (DocumentSnapshot doc in snapshot.docs) {
-                                              doc.reference.delete();
-                                            }
-                                          });
-                              Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                          },
-                          icon: Icon(
-                            Icons.download,
-                            color: Colors.white,
-                          ))
-                    ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: orders.length,
                   ),
-                );
-              }),
+          ),
           // Container(
           //   child: Text(
           //     'Total Revenue Generated: INR ${orders.length}',
@@ -245,6 +176,92 @@ class _ViewOrdersState extends State<ViewOrders> {
           //   ),
           // ),
         ],
+      ),
+      bottomNavigationBar: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        future: FirebaseFirestore.instance.collection('orders').get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: Text('loading'));
+          }
+          print(snapshot.data.docs.length);
+          return Container(
+            padding: EdgeInsets.all(10),
+            color: Colors.orange,
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  'Total Orders: ${snapshot.data.docs.length}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                IconButton(
+                    onPressed: () async {
+                      orders.length == 0
+                          ? ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("No orders to save...")))
+                          : showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Download Data as Excel'),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: const <Widget>[
+                                        Text('Delete and Download'),
+                                        Text(
+                                            'Would you like to delete data from firebase and download as excel.'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text('Download'),
+                                      onPressed: () async {
+                                        await saveexcel(context);
+                                        FirebaseFirestore.instance
+                                            .collection('orders')
+                                            .get()
+                                            .then(
+                                          (snapshot) {
+                                            for (DocumentSnapshot doc
+                                                in snapshot.docs) {
+                                              doc.reference.delete();
+                                            }
+                                            setState(
+                                              () {
+                                                orders = [];
+                                              },
+                                            );
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                    },
+                    icon: Icon(
+                      Icons.download,
+                      color: Colors.white,
+                    ))
+              ],
+            ),
+          );
+        },
       ),
     );
   }

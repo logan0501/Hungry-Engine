@@ -156,6 +156,15 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+      // bottomNavigationBar: Container(
+      //   child: TextButton(
+      //     onPressed: () => Navigator.of(context).pushNamed('/view-orders'),
+      //     child: Text('View Orders'),
+      //     style: TextButton.styleFrom(
+      //       primary: Colors.grey,
+      //     ),
+      //   ),
+      // ),
     );
   }
 }
