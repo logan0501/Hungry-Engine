@@ -256,6 +256,9 @@ class _ViewOrdersState extends State<ViewOrders> {
     var cell = sheetObject.cell(CellIndex.indexByString("A1"));
     cell.value = 8; // Insert value to selected cell;
     FirebaseFirestore.instance.collection('orders').get().then((_qs) {
+      if(_qs==null){
+        return;
+      }
       for (int i = 0; i < _qs.docs.length; i++) {
         var namecell = sheetObject.cell(CellIndex.indexByString("A" +
             (i + 1)
@@ -290,7 +293,8 @@ class _ViewOrdersState extends State<ViewOrders> {
             "${directory.path}/${DateTime.now().millisecondsSinceEpoch.toString()}.xlsx"))
           ..createSync(recursive: true)
           ..writeAsBytesSync(onValue);
-        ScaffoldMessenger.of(context).showSnackBar(
+
+        Scaffold.of(context).showSnackBar(
             SnackBar(content: Text("File saved at ${directory.path}")));
       });
     });
