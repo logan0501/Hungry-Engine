@@ -23,21 +23,33 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           child: Column(
             children: [
-              Stack(
-                overflow: Overflow.visible,
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    child: Image.asset('assets/circle.png'),
-                  ),
-                  Positioned(
-                    bottom: -40,
-                    child: Image.asset(
-                      'assets/orange-vector.png',
-                    ),
-                  ),
-                ],
+              SizedBox(
+                height: 50,
               ),
+              CircleAvatar(
+                foregroundImage: AssetImage(
+                  'assets/hungry-logo-new.jpeg',
+                ),
+                radius: 150,
+              ),
+              // Stack(
+              //   overflow: Overflow.visible,
+              //   alignment: Alignment.center,
+              //   children: [
+              //     Container(
+              //       child: Image.asset('assets/circle.png'),
+              //     ),
+              //     Positioned(
+              //       bottom: -40,
+              //       child: CircleAvatar(
+              //         foregroundImage: AssetImage(
+              //           'assets/hungry-logo-new.jpeg',
+              //         ),
+              //         radius: 150,
+              //       ),
+              //     ),
+              //   ],
+              // ),
               SizedBox(
                 height: 50,
               ),
@@ -146,12 +158,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 50),
-                child: Image(
-                  image: AssetImage('assets/logo.png'),
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.only(top: 50),
+              //   child: Image(
+              //     image: AssetImage('assets/logo.png'),
+              //   ),
+              // ),
             ],
           ),
         ),

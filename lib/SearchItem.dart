@@ -22,7 +22,11 @@ class _SearchItemState extends State<SearchItem> {
     setState(() {
       isLoading = true;
     });
-    FirebaseFirestore.instance.collection('foods').get().then((foods) {
+    FirebaseFirestore.instance
+        .collection('foods')
+        .orderBy('foodName')
+        .get()
+        .then((foods) {
       foods.docs.forEach((e) {
         fooditems.add(
           FoodItem(
@@ -65,7 +69,11 @@ class _SearchItemState extends State<SearchItem> {
   Future<void> onRefresh() {
     fooditems = [];
     refreshKey.currentState?.show(atTop: false);
-    FirebaseFirestore.instance.collection('foods').get().then((foods) {
+    FirebaseFirestore.instance
+        .collection('foods')
+        .orderBy('foodName')
+        .get()
+        .then((foods) {
       foods.docs.forEach((e) {
         fooditems.add(
           FoodItem(
@@ -229,43 +237,42 @@ class _SearchItemState extends State<SearchItem> {
                         ],
                       ),
                     ),
-
-                  Expanded(
-                    child:ListView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ExpansionTile(
-                            key: Key('builder' + selected.toString()),
-                            initiallyExpanded: index == selected,
-                            onExpansionChanged: ((newstate) {
-                              if (newstate) {
-                                setState(() {
-                                  selected = index;
-                                });
-                              } else {
-                                setState(() {
-                                  selected = -1;
-                                });
-                              }
-                            }),
-                            title: Text('${items[index].name}'),
-                            children: [
-                              SingleChildScrollView(
-                                child: Container(
-                                  width: 200,
-                                  child: TextFormField(
-                                    onChanged: (val) {
-                                      items[index].setcount(int.parse(val));
-                                    },
-                                    controller: items[index].controller,
-                                    keyboardType: TextInputType.number,
-                                    style: TextStyle(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
+                    Expanded(
+                      child: ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ExpansionTile(
+                              key: Key('builder' + selected.toString()),
+                              initiallyExpanded: index == selected,
+                              onExpansionChanged: ((newstate) {
+                                if (newstate) {
+                                  setState(() {
+                                    selected = index;
+                                  });
+                                } else {
+                                  setState(() {
+                                    selected = -1;
+                                  });
+                                }
+                              }),
+                              title: Text('${items[index].name}'),
+                              children: [
+                                SingleChildScrollView(
+                                  child: Container(
+                                    width: 200,
+                                    child: TextFormField(
+                                      onChanged: (val) {
+                                        items[index].setcount(int.parse(val));
+                                      },
+                                      controller: items[index].controller,
+                                      keyboardType: TextInputType.number,
+                                      style: TextStyle(
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
                                       decoration: InputDecoration(
                                         prefixIcon: IconButton(
                                           icon: Icon(Icons.remove),
@@ -294,10 +301,9 @@ class _SearchItemState extends State<SearchItem> {
                         itemCount: items.length,
                       ),
                     ),
-
-
-                ],
-    ),),
+                  ],
+                ),
+              ),
         bottomNavigationBar: isLoading
             ? Container()
             : GestureDetector(

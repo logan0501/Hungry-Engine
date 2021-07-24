@@ -73,6 +73,9 @@ class _ViewOrdersState extends State<ViewOrders> {
       ),
       body: Column(
         children: [
+          SizedBox(
+            height: 15,
+          ),
           Expanded(
             flex: 6,
             // height: MediaQuery.of(context).size.height * 0.8,
@@ -144,7 +147,7 @@ class _ViewOrdersState extends State<ViewOrders> {
                                     ),
                                     Spacer(),
                                     Text(
-                                      'INR ${e['itemCost']}',
+                                      'INR ${e['itemCost']} * ${e['itemCount']} = INR ${e['total']}',
                                       style: TextStyle(
                                         color: Colors.black45,
                                         fontSize: 12,
@@ -157,6 +160,14 @@ class _ViewOrdersState extends State<ViewOrders> {
                             }),
                             SizedBox(
                               height: 10,
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 15,
+                              ),
+                              child: Divider(
+                                thickness: 2,
+                              ),
                             ),
                           ],
                         ),
@@ -273,7 +284,7 @@ class _ViewOrdersState extends State<ViewOrders> {
     var cell = sheetObject.cell(CellIndex.indexByString("A1"));
     cell.value = 8; // Insert value to selected cell;
     FirebaseFirestore.instance.collection('orders').get().then((_qs) {
-      if(_qs==null){
+      if (_qs == null) {
         return;
       }
       for (int i = 0; i < _qs.docs.length; i++) {

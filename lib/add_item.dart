@@ -89,6 +89,7 @@ class _AddItemState extends State<AddItem> {
                   child: StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('foods')
+                          .orderBy('foodName')
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
